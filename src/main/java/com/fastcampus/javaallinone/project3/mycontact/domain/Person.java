@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import java.time.LocalDate;
 
 @Entity
@@ -37,6 +38,9 @@ public class Person {
 
     @ToString.Exclude   // 데이터 숨김
     private String phoneNumber;
+
+    @OneToOne   // block을 했는지 안했는지만 확인하면 되기 때문에 OneToOne
+    private Block block;
 
 //    public boolean equals(Object object) {
 //
