@@ -24,11 +24,12 @@ public class PersonService {
 
     public List<Person> getPeopleExcludeBlocks() {
 
-        List<Person> people = personRepository.findAll();
 //        List<Block> blocks = blockRepository.findAll();
 //        List<String> blockNames = blocks.stream().map(Block::getName).collect(Collectors.toList());
 
-        return people.stream().filter(person -> person.getBlock() == null).collect(Collectors.toList());
+//        List<Person> people = personRepository.findAll();
+//        return people.stream().filter(person -> person.getBlock() == null).collect(Collectors.toList());
+        return personRepository.findByBlockIsNull();
 
     }
 
@@ -43,4 +44,11 @@ public class PersonService {
 
     }
 
+    public List<Person> getPeopleByName(String name) {
+
+//        List<Person> people = personRepository.findAll();
+//        return people.stream().filter(person -> person.getName().equals(name)).collect(Collectors.toList());
+        return personRepository.findByName(name);
+
+    }
 }

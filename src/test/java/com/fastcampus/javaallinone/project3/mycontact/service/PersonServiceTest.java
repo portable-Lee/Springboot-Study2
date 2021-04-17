@@ -69,6 +69,29 @@ class PersonServiceTest {   // 해당 class에서 ctrl + shift + t 단축기를 
         System.out.println(person);
     }
 
+    @Test
+    void getPeopleByName() {
+        givenPeople();
+
+        List<Person> result = personService.getPeopleByName("martin");
+
+        result.forEach(System.out::println);
+    }
+
+    @Test
+    void findByBloodType() {
+        givenPerson("martin", 10, "A");
+        givenPerson("david", 9, "B");
+        givenPerson("dennis", 8, "O");
+        givenPerson("sophia", 7, "AB");
+        givenPerson("benny", 6, "A");
+        givenPerson("john", 5, "A");
+
+        List<Person> result = personRepository.findByBloodType("A");
+
+        result.forEach(System.out::println);
+    }
+
     private void givenPeople() {
         givenPerson("martin", 10, "A");
         givenPerson("david", 9, "B");
