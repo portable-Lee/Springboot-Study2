@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,20 +24,18 @@ public class PersonService {
     private BlockRepository blockRepository;
 
     public List<Person> getPeopleExcludeBlocks() {
-
-//        List<Block> blocks = blockRepository.findAll();
-//        List<String> blockNames = blocks.stream().map(Block::getName).collect(Collectors.toList());
-
-//        List<Person> people = personRepository.findAll();
-//        return people.stream().filter(person -> person.getBlock() == null).collect(Collectors.toList());
         return personRepository.findByBlockIsNull();
+    }
 
+    public List<Person> getPeopleByName(String name) {
+        return personRepository.findByName(name);
     }
 
     @Transactional(readOnly = true)
     public Person getPerson(Long id) {
 
-        Person person = personRepository.findById(id).get();
+//        Person person = personRepository.findById(id).get();
+        Person person = personRepository.findById(id).orElse(null);
 
         log.info("person : {}", person);
 
@@ -44,11 +43,4 @@ public class PersonService {
 
     }
 
-    public List<Person> getPeopleByName(String name) {
-
-//        List<Person> people = personRepository.findAll();
-//        return people.stream().filter(person -> person.getName().equals(name)).collect(Collectors.toList());
-        return personRepository.findByName(name);
-
-    }
 }
