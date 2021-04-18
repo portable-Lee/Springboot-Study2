@@ -15,15 +15,15 @@ import java.time.LocalDate;
 @Data
 public class Birthday {
 
-    private int yearOfBirthday;
+    private Integer yearOfBirthday;
 
     @Min(1)
     @Max(12)
-    private int monthOfBirthday;
+    private Integer monthOfBirthday;
 
     @Min(1)
     @Max(31)
-    private int dayOfBirthday;
+    private Integer dayOfBirthday;
 
     public Birthday(LocalDate birthday) {   // 각 월과 일을 맞춤 ex)1월 : 31일, 2월 : 28일, ...
         this.yearOfBirthday = birthday.getYear();
