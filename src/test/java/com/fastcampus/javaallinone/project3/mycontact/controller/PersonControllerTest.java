@@ -34,11 +34,11 @@ class PersonControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/person")
                                                 .contentType(MediaType.APPLICATION_JSON)
-                                                .content("{\n" +
-                                                        "    \"name\": \"martin2\",\n" +
-                                                        "    \"age\": 20,\n" +
-                                                        "    \"bloodType\": \"A\"\n" +
-                                                        "}"))
+                                                .content("{\n"
+                                                        + "\"name\": \"martin2\",\n"
+                                                        + "\"age\": 20,\n"
+                                                        + "\"bloodType\": \"A\"\n"
+                                                        + "}"))
                 .andDo(print())
                 .andExpect(status().isCreated());
     }
