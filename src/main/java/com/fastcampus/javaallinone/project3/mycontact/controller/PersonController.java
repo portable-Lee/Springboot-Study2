@@ -24,13 +24,13 @@ public class PersonController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)     // http response 상태 코드 201을 반환
-    public void postPerson(@RequestBody Person person) {
-        personService.put(person);
+    public void postPerson(@RequestBody PersonDto personDto) {
+        personService.put(personDto);
     }
 
     @PutMapping("/{id}")    // 전체 update
-    public void modifyPerson(@PathVariable Long id, @RequestBody PersonDto person) {
-        personService.modify(id, person);
+    public void modifyPerson(@PathVariable Long id, @RequestBody PersonDto personDto) {
+        personService.modify(id, personDto);
     }
 
     @PatchMapping("/{id}")  // 일부만 update
