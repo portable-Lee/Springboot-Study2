@@ -30,10 +30,6 @@ public class Person {
     @Column(nullable = false)
     private String name;
 
-    @NonNull
-    @Min(1)
-    private Integer age;
-
     private String hobby;
 
     @NonNull
@@ -60,10 +56,6 @@ public class Person {
     private Block block;
 
     public void set(PersonDto personDto) {
-        if (personDto.getAge() != 0) {
-            this.setAge(personDto.getAge());
-        }
-
         if (!StringUtils.isEmpty(personDto.getHobby())) {
             this.setHobby(personDto.getHobby());
         }
@@ -85,27 +77,16 @@ public class Person {
         }
     }
 
-//    public boolean equals(Object object) {
-//
-//        if (object == null) {
-//            return false;
-//        }
-//
-//        Person person = (Person) object;
-//
-//        if (!person.getName().equals(this.getName())) {
-//            return false;
-//        }
-//
-//        if (person.getAge() != this.getAge()) {
-//            return false;
-//        }
-//
-//        return true;
-//    }
-//
-//    public int hashCode() {
-//        return (name + age).hashCode();
-//    }
+    public Integer getAge() {       // 현재 나이 계산
+        if (this.birthday != null) {
+            return LocalDate.now().getYear() - this.birthday.getYearOfBirthday() + 1;
+        } else {
+            return null;
+        }
+    }
+
+    public boolean isBirthdayToday() {      // 오늘 생일인지 확인
+        return LocalDate.now().equals(LocalDate.of(this.birthday.getYearOfBirthday(), this.birthday.getMonthOfBirthday(), this.birthday.getDayOfBirthday()));
+    }
 
 }

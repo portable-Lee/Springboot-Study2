@@ -1,7 +1,10 @@
 package com.fastcampus.javaallinone.project3.mycontact.repository;
 
 import com.fastcampus.javaallinone.project3.mycontact.domain.Person;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +24,6 @@ class PersonRepositoryTest {
     void crud() {
         Person person = new Person();
         person.setName("john");
-        person.setAge(10);
         person.setBloodType("A");
 
         personRepository.save(person);
@@ -30,7 +32,7 @@ class PersonRepositoryTest {
 
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.get(0).getName()).isEqualTo("john");
-        assertThat(result.get(0).getAge()).isEqualTo(10);
+//        assertThat(result.get(0).getAge()).isEqualTo(10);
         assertThat(result.get(0).getBloodType()).isEqualTo("A");
     }
 
