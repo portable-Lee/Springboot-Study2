@@ -11,6 +11,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -39,11 +41,14 @@ class PersonControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private MappingJackson2HttpMessageConverter messageConverter;
+
     private MockMvc mockMvc;
 
-    @BeforeEach     // test 실행 전에 먼저 실행됨
+    @BeforeEach     // @Test 실행 전에 먼저 실행됨
     void beforeEach() {
-        mockMvc = MockMvcBuilders.standaloneSetup(personController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(personController).setMessageConverters(messageConverter).build();
     }
 
     @Test
@@ -51,7 +56,16 @@ class PersonControllerTest {
     void getPerson() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/person/1"))
                .andDo(print())
-               .andExpect(status().isOk());
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.name").value("martin"))  // $ : 객체, $.name과 같이 각 객체의 attribute 값을 가져올 수 있음, chaining 사용 가능 / value는 가져온 값이 맞는지 확인
+               .andExpect(jsonPath("$.hobby").isEmpty())
+               .andExpect(jsonPath("$.address").isEmpty())
+               .andExpect(jsonPath("$.birthday").value("1991-08-15"))
+               .andExpect(jsonPath("$.job").isEmpty())
+               .andExpect(jsonPath("$.phoneNumber").isEmpty())
+               .andExpect(jsonPath("$.deleted").value(false))
+               .andExpect(jsonPath("$.age").isNumber())
+               .andExpect(jsonPath("$.birthdayToday").isBoolean());
     }
 
     @Test
