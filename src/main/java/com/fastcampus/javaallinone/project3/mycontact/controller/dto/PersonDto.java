@@ -9,11 +9,7 @@ public class PersonDto {
 
     private String name;
 
-    private Integer age;
-
     private String hobby;
-
-    private String bloodType;
 
     private String address;
 

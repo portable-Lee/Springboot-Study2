@@ -9,7 +9,6 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
@@ -32,11 +31,6 @@ public class Person {
 
     private String hobby;
 
-    @NonNull
-    @NotEmpty
-    @Column(nullable = false)
-    private String bloodType;
-
     private String address;
 
     @Embedded
@@ -45,23 +39,14 @@ public class Person {
 
     private String job;
 
-    @ToString.Exclude   // 데이터 숨김
     private String phoneNumber;
 
     @ColumnDefault("0")
     private boolean deleted;    // true = 데이터 삭제됨으로 표시(실제 삭제x), false = 삭제 안됨 표시(default)
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)   // block을 했는지 안했는지만 확인하면 되기 때문에 OneToOne   / fetch, optional
-    @ToString.Exclude
-    private Block block;
-
     public void set(PersonDto personDto) {
         if (!StringUtils.isEmpty(personDto.getHobby())) {
             this.setHobby(personDto.getHobby());
-        }
-
-        if (!StringUtils.isEmpty(personDto.getBloodType())) {
-            this.setBloodType(personDto.getBloodType());
         }
 
         if (!StringUtils.isEmpty(personDto.getAddress())) {
@@ -74,6 +59,10 @@ public class Person {
 
         if (!StringUtils.isEmpty(personDto.getPhoneNumber())) {
             this.setPhoneNumber(personDto.getPhoneNumber());
+        }
+
+        if (personDto.getBirthday() != null) {
+            this.setBirthday(Birthday.of(personDto.getBirthday()));
         }
     }
 
