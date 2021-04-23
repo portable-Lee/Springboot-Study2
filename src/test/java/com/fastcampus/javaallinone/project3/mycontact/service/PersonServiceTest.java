@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)     // Mockito를 사용하는 이유 : 해당 test에 대해 더 자세히 검증 가능
+@ExtendWith(MockitoExtension.class)     // Mockito를 사용하는 이유 : 해당 test에 대해 더 자세히 검증 가능, SpringBootTest보다 더 빠르게 test 가능하므로 logic이 많을수록 더 편리함
 class PersonServiceTest {   // 해당 class에서 ctrl + shift + t 단축기를 누르면 Test Class 생성 가능
 
     @InjectMocks    // 해당 test의 class(현재 PersonServiceTest 이므로 PersonService에 사용)
@@ -63,7 +63,7 @@ class PersonServiceTest {   // 해당 class에서 ctrl + shift + t 단축기를 
     void put() {
         personService.put(mockPersonDto());     // return 값이 없을때는 호출이 성공 또는 실패하였는지에 대해서만 검증
 
-        verify(personRepository, times(1)).save(any(Person.class));     // personService.put(dto)를 호출하여 실제로 personRepository.save(dto)가 실행되는지에 대한 검증
+        verify(personRepository, times(1)).save(argThat(new IsPersonWillBeInserted()));     // personService.put(dto)를 호출하여 실제로 personRepository.save(dto)가 실행되는지에 대한 검증
     }
 
     @Test
@@ -89,8 +89,57 @@ class PersonServiceTest {   // 해당 class에서 ctrl + shift + t 단축기를 
         verify(personRepository, times(1)).save(argThat(new IsPersonWillBeUpdated()));  // personDto가 정상적으로 person 객체에 set 되었는지 확인
     }
 
+    @Test
+    void modifyByNameIfPersonNotFound() {
+        when(personRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> personService.modify(1L, "daniel"));
+    }
+
+    @Test
+    void modifyByName() {
+        when(personRepository.findById(1L)).thenReturn(Optional.of(new Person("martin")));
+
+        personService.modify(1L, "daniel");
+
+        verify(personRepository, times(1)).save(argThat(new IsPersonNameWillBeUpdated()));
+    }
+
+    @Test
+    void deleteIfPersonNotFound() {
+        when(personRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> personService.delete(1L));
+    }
+
+    @Test
+    void delete() {
+        when(personRepository.findById(1L)).thenReturn(Optional.of(new Person("martin")));
+
+        personService.delete(1L);
+
+        verify(personRepository, times(1)).save(argThat(new IsPersonWillBeDeleted()));  // delete가 아닌 save인 이유 : PersonService의 delete method에서 data 삭제 과정을 변경하였기 때문(deleted flag를 사용하여 true/false로 check)
+    }
+
     private PersonDto mockPersonDto() {
         return PersonDto.of("martin", "programming", "판교", LocalDate.now(), "programmer", "010-1111-2222");
+    }
+
+    private static class IsPersonWillBeInserted implements ArgumentMatcher<Person> {
+
+        @Override
+        public boolean matches(Person person) {
+            return equals(person.getName(), "martin")
+                    && equals(person.getHobby(), "programming")
+                    && equals(person.getAddress(),"판교")
+                    && equals(person.getBirthday(), Birthday.of(LocalDate.now()))
+                    && equals(person.getJob(), "programmer")
+                    && equals(person.getPhoneNumber(), "010-1111-2222");
+        }
+
+        private boolean equals(Object actual, Object expected) {
+            return expected.equals(actual);
+        }
     }
 
     private static class IsPersonWillBeUpdated implements ArgumentMatcher<Person> {
@@ -109,6 +158,22 @@ class PersonServiceTest {   // 해당 class에서 ctrl + shift + t 단축기를 
             return expected.equals(actual);
         }
 
+    }
+
+    private static class IsPersonNameWillBeUpdated implements ArgumentMatcher<Person> {
+
+        @Override
+        public boolean matches(Person person) {
+            return person.getName().equals("daniel");
+        }
+    }
+
+    private static class IsPersonWillBeDeleted implements ArgumentMatcher<Person> {
+
+        @Override
+        public boolean matches(Person person) {
+            return person.isDeleted();
+        }
     }
 
 }
