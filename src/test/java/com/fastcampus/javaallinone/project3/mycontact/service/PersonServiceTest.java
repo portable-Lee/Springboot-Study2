@@ -3,6 +3,8 @@ package com.fastcampus.javaallinone.project3.mycontact.service;
 import com.fastcampus.javaallinone.project3.mycontact.controller.dto.PersonDto;
 import com.fastcampus.javaallinone.project3.mycontact.domain.Person;
 import com.fastcampus.javaallinone.project3.mycontact.domain.dto.Birthday;
+import com.fastcampus.javaallinone.project3.mycontact.exception.PersonNotFoundException;
+import com.fastcampus.javaallinone.project3.mycontact.exception.RenameNotPermittedException;
 import com.fastcampus.javaallinone.project3.mycontact.repository.PersonRepository;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
@@ -18,7 +20,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)     // Mockito를 사용하는 이유 : 해당 test에 대해 더 자세히 검증 가능, SpringBootTest보다 더 빠르게 test 가능하므로 logic이 많을수록 더 편리함
@@ -70,14 +71,14 @@ class PersonServiceTest {   // 해당 class에서 ctrl + shift + t 단축기를 
     void modifyIfPersonNotFound() {     // modify에 대한 test는 분기별로 검증이 필요(1. id의 존재)
         when(personRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> personService.modify(1L, mockPersonDto()));
+        assertThrows(PersonNotFoundException.class, () -> personService.modify(1L, mockPersonDto()));
     }
 
     @Test
     void modifyIfNameIsDifferent() {    // modify에 대한 test는 분기별로 검증이 필요(2. name의 일치)
         when(personRepository.findById(1L)).thenReturn(Optional.of(new Person("tony")));
 
-        assertThrows(RuntimeException.class, () -> personService.modify(1L, mockPersonDto()));
+        assertThrows(RenameNotPermittedException.class, () -> personService.modify(1L, mockPersonDto()));
     }
 
     @Test
@@ -93,7 +94,7 @@ class PersonServiceTest {   // 해당 class에서 ctrl + shift + t 단축기를 
     void modifyByNameIfPersonNotFound() {
         when(personRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> personService.modify(1L, "daniel"));
+        assertThrows(PersonNotFoundException.class, () -> personService.modify(1L, "daniel"));
     }
 
     @Test
@@ -109,7 +110,7 @@ class PersonServiceTest {   // 해당 class에서 ctrl + shift + t 단축기를 
     void deleteIfPersonNotFound() {
         when(personRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> personService.delete(1L));
+        assertThrows(PersonNotFoundException.class, () -> personService.delete(1L));
     }
 
     @Test
