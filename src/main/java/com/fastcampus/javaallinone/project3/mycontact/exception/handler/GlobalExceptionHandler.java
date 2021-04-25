@@ -5,6 +5,7 @@ import com.fastcampus.javaallinone.project3.mycontact.exception.RenameNotPermitt
 import com.fastcampus.javaallinone.project3.mycontact.exception.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,6 +24,12 @@ public class GlobalExceptionHandler {   // Controller마다 적용하는 Excepti
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handlePersonNotFoundException(PersonNotFoundException exception) {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        return ErrorResponse.of(HttpStatus.BAD_REQUEST, exception.getBindingResult().getFieldError().getDefaultMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)

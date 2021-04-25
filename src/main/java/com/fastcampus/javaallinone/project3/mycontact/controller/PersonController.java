@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RequestMapping(value = "/api/person")
 @RestController
 @Slf4j
@@ -27,7 +29,7 @@ public class PersonController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)     // http response 상태 코드 201을 반환
-    public void postPerson(@RequestBody PersonDto personDto) {
+    public void postPerson(@RequestBody @Valid PersonDto personDto) {
         personService.put(personDto);
     }
 
