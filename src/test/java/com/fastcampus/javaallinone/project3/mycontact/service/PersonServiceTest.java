@@ -13,6 +13,10 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,6 +34,18 @@ class PersonServiceTest {   // 해당 class에서 ctrl + shift + t 단축기를 
 
     @Mock           // Autowired 하는 class
     private PersonRepository personRepository;
+
+    @Test
+    void getAll() {
+        when(personRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(Lists.newArrayList(new Person("martin"), new Person("dennis"), new Person("tony"))));
+
+        Page<Person> result = personService.getAll(PageRequest.of(0, 3));   // Pageable Interface를 구현한 PageRequest 사용
+
+        assertThat(result.getNumberOfElements()).isEqualTo(3);
+        assertThat(result.getContent().get(0).getName()).isEqualTo("martin");
+        assertThat(result.getContent().get(1).getName()).isEqualTo("dennis");
+        assertThat(result.getContent().get(2).getName()).isEqualTo("tony");
+    }
 
     @Test
     void getPeopleByName() {

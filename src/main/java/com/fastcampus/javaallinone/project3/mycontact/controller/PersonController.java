@@ -2,14 +2,13 @@ package com.fastcampus.javaallinone.project3.mycontact.controller;
 
 import com.fastcampus.javaallinone.project3.mycontact.controller.dto.PersonDto;
 import com.fastcampus.javaallinone.project3.mycontact.domain.Person;
-import com.fastcampus.javaallinone.project3.mycontact.exception.PersonNotFoundException;
-import com.fastcampus.javaallinone.project3.mycontact.exception.RenameNotPermittedException;
-import com.fastcampus.javaallinone.project3.mycontact.exception.dto.ErrorResponse;
 import com.fastcampus.javaallinone.project3.mycontact.service.PersonService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,6 +20,11 @@ public class PersonController {
 
     @Autowired
     private PersonService personService;
+
+    @GetMapping
+    public Page<Person> getAll(@PageableDefault Pageable pageable) {    // @PageableDefault를 통해 기본 page 정보를 제공
+        return personService.getAll(pageable);
+    }
 
     @GetMapping("/{id}")
     public Person getPerson(@PathVariable Long id){

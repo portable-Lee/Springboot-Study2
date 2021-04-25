@@ -3,7 +3,6 @@ package com.fastcampus.javaallinone.project3.mycontact.controller;
 import com.fastcampus.javaallinone.project3.mycontact.controller.dto.PersonDto;
 import com.fastcampus.javaallinone.project3.mycontact.domain.Person;
 import com.fastcampus.javaallinone.project3.mycontact.domain.dto.Birthday;
-import com.fastcampus.javaallinone.project3.mycontact.exception.handler.GlobalExceptionHandler;
 import com.fastcampus.javaallinone.project3.mycontact.repository.PersonRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -24,6 +22,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -52,6 +51,25 @@ class PersonControllerTest {
                                  .addFilters(new CharacterEncodingFilter("UTF-8", true))    // MockHttpServletResponse 부분에서 한글이 깨져서 추가함
                                  .alwaysDo(print())
                                  .build();
+    }
+
+    @Test
+    void getAll() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/person")
+                                              .param("page", "1")           // 몇번째 page인지
+                                              .param("size", "2"))          // 한 page마다 몇 개의 elements를 가져오는지
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalPages").value(3))       // 전체 page 수
+                .andExpect(jsonPath("$.totalElements").value(6))    // 전체 elements 갯수
+                .andExpect(jsonPath("$.numberOfElements").value(2)) // page별 elements 갯수
+//                .andExpect(jsonPath("$.content.[0].name").value("martin"))  // $.[x].name : 객체의 index값에 해당하는 name값을 가져옴
+//                .andExpect(jsonPath("$.content.[1].name").value("david"))
+//                .andExpect(jsonPath("$.content.[2].name").value("dennis"))
+//                .andExpect(jsonPath("$.content.[3].name").value("sophia"))
+//                .andExpect(jsonPath("$.content.[4].name").value("benny"))
+//                .andExpect(jsonPath("$.content.[5].name").value("tony"));
+                .andExpect(jsonPath("$.content.[0].name").value("dennis"))
+                .andExpect(jsonPath("$.content.[1].name").value("sophia"));
     }
 
     @Test
