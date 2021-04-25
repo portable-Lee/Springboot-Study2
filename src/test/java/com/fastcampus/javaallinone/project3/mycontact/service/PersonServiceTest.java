@@ -138,6 +138,25 @@ class PersonServiceTest {   // 해당 class에서 ctrl + shift + t 단축기를 
         verify(personRepository, times(1)).save(argThat(new IsPersonWillBeDeleted()));  // delete가 아닌 save인 이유 : PersonService의 delete method에서 data 삭제 과정을 변경하였기 때문(deleted flag를 사용하여 true/false로 check)
     }
 
+
+
+    /************** birthday-friends **************/
+    @Test
+    void getBirthdayFriends() {
+        when(personRepository.findBirthdayBetweenTodayAndTomorrow(LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth())).thenReturn(Lists.newArrayList(new Person("tom"), new Person("tom2"), new Person("tom4"), new Person("tom5")));
+
+        List<Person> result = personService.getBirthdayFriends();
+
+        assertThat(result.size()).isEqualTo(4);
+        assertThat(result.get(0).getName()).isEqualTo("tom");
+        assertThat(result.get(1).getName()).isEqualTo("tom2");
+        assertThat(result.get(2).getName()).isEqualTo("tom4");
+        assertThat(result.get(3).getName()).isEqualTo("tom5");
+    }
+    /**********************************************/
+
+
+
     private PersonDto mockPersonDto() {
         return PersonDto.of("martin", "programming", "판교", LocalDate.now(), "programmer", "010-1111-2222");
     }

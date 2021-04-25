@@ -60,4 +60,21 @@ class PersonRepositoryTest {    // JpaRepository를 상속받아 사용하면 �
         assertThat(people.get(0).getName()).isEqualTo("andrew");
     }
 
+
+
+    /************** birthday-friends **************/
+    @Test
+    void findBirthdayBetweenTodayAndTomorrow() {
+        List<Person> people = personRepository.findBirthdayBetweenTodayAndTomorrow(Birthday.of(LocalDate.now()).getMonthOfBirthday(), Birthday.of(LocalDate.now()).getDayOfBirthday());
+
+        assertThat(people.size()).isEqualTo(4);
+
+        assertAll(() -> assertThat(people.get(0).getName()).isEqualTo("tom"),
+                  () -> assertThat(people.get(1).getName()).isEqualTo("tom2"),
+                  () -> assertThat(people.get(2).getName()).isEqualTo("tom4"),
+                  () -> assertThat(people.get(3).getName()).isEqualTo("tom5")
+                 );
+    }
+    /**********************************************/
+
 }

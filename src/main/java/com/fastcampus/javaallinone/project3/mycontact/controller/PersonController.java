@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RequestMapping(value = "/api/person")
 @RestController
@@ -51,5 +52,14 @@ public class PersonController {
     public void deletePerson(@PathVariable Long id) {
         personService.delete(id);
     }
+
+
+
+    /************** birthday-friends **************/
+    @GetMapping("/birthday-friends")
+    public List<Person> getBirthdayFriends() {
+        return personService.getBirthdayFriends();
+    }
+    /**********************************************/
 
 }

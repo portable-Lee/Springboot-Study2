@@ -17,4 +17,11 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
     @Query(value = "select * from Person person where person.deleted = true", nativeQuery = true)   // nativeQuery : 작성된 query문으로 실행
     List<Person> findPeopleDeleted();
 
+
+
+    /************** birthday-friends **************/
+    @Query(value = "select person from Person person where person.birthday.monthOfBirthday = :monthOfBirthday and (person.birthday.dayOfBirthday between :dayOfBirthday and :dayOfBirthday + 1)")
+    List<Person> findBirthdayBetweenTodayAndTomorrow(@Param("monthOfBirthday") int monthOfBirthday, @Param("dayOfBirthday") int dayOfBirthday);
+    /**********************************************/
+
 }

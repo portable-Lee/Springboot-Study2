@@ -22,7 +22,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -185,7 +184,7 @@ class PersonControllerTest {
     void modifyPersonIfPersonNotFound() throws Exception {
         PersonDto dto = PersonDto.of("martin", "programming", "판교", LocalDate.now(), "programmer", "010-1111-2222");
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/person/10")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/person/20")
                                               .contentType(MediaType.APPLICATION_JSON_UTF8)
                                               .content(toJsonString(dto)))
                .andExpect(status().isBadRequest())
@@ -211,6 +210,22 @@ class PersonControllerTest {
 
         assertTrue(personRepository.findPeopleDeleted().stream().anyMatch(person -> person.getId().equals(1L)));
     }
+
+
+
+    /************** birthday-friends **************/
+    @Test
+    void getBirthdayFriends() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/person/birthday-friends"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.[0].name").value("tom"))
+               .andExpect(jsonPath("$.[1].name").value("tom2"))
+               .andExpect(jsonPath("$.[2].name").value("tom4"))
+               .andExpect(jsonPath("$.[3].name").value("tom5"));
+    }
+    /**********************************************/
+
+
 
     private String toJsonString(PersonDto personDto) throws JsonProcessingException{
         return objectMapper.writeValueAsString(personDto);
